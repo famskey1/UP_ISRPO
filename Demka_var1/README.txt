@@ -1,0 +1,1 @@
+Данное приложение создано с ASP.net C#, Node.js и React.js
