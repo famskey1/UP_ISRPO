@@ -1,20 +1,32 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+
+import CommentsPage from './Pages/CommentsPage.jsx'
+import UserPage from './Pages/UserPage.jsx'
+import RequestsPage from './Pages/RequestsPage.jsx'
+import AuthorizationApp from './AuthorizationApp.jsx'
 import './index.css'
-import App from './App.jsx'
+
 const router = createBrowserRouter([
   {
     errorElement: <ErrorPage/>,
     children: [{
       path: "",
-      element: <App/>
+      element: <AuthorizationApp/>
     },
     {
-      path: "/authorization",
-      element: <Autorisation/>
+      path: "/user/{id}",
+      element: <UserPage/>
     },
-  
+    {
+      path: "/requests/{id}/comments",
+      element: <CommentsPage/>
+    },
+    {
+      path: "/requests",
+      element: <RequestsPage/>
+    },
   ]
   }
 ])
