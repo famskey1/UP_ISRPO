@@ -1,7 +1,35 @@
-import {base_url} from './BaseData'
-import { jwtDecode } from "jwt-decode";
+import {BASE_URL} from './BaseData'
+import { fetchWithErrorHandling, fetchWithFormData } from './fetchWithErrorHandling';
+import { isAuthenticated, getCurrentUserId, hasRole } from './TokenUtils';
 
 export const UsersAPI = {
+     login: async (login, password) => {
+        const response = await fetch(`${BASE_URL}/auth/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ login, password }),
+        });
+        
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Неверный логин или пароль');
+        }
+        
+        const data = await response.json();
+        
+        if (data.token) {
+            setToken(data.token);
+        }
+        
+        return data;
+    },
+    logout: () => {
+        localStorage.removeItem('access_token');
+        window.location.href = '/login';
+    },
+
     getAll: async () => {
         return fetchWithErrorHandling(`${BASE_URL}/users`, {
             method: 'GET',
@@ -12,6 +40,9 @@ export const UsersAPI = {
     },
 
     getOne: async (id) => {
+        if (!isAuthenticated()) {
+            throw new Error('Необходимо войти в систему');
+        }
         return fetchWithErrorHandling(`${BASE_URL}/users/${id}`,{
             method: 'GET',
             headers: {
@@ -20,29 +51,30 @@ export const UsersAPI = {
         });
     },
 
-    update: async (request) => {
-        var token = getCookie(UGC_COOKIE)
-        if(token == undefined) return;
-        const data = jwtDecode(token);
-        if(data.userId != request.authorId) return;
-        return protectedFetch(`${BASE_URL}/users/update`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            },
-            body: request
-        })
+    update: async (id, formData) => {
+        if (!isAuthenticated()) {
+          throw new Error('Необходимо войти в систему');
+        }
+
+        if (!hasRole('Admin') && getCurrentUserId() != id) {
+            throw new Error('Вы можете редактировать только свой профиль');
+        }
+        
+        return fetchWithFormData(`${BASE_URL}/users/update/${id}`, 
+            formData, 'PATCH');
     },
 
     delete: async (id) => {
-        var token = getCookie(UGC_COOKIE)
-        if(token == undefined) return;
-        const data = jwtDecode(token);
-        if(data.role != 'Admin' || data.userId != request.authorId) return;
+        if (!hasRole('Admin')) {
+            throw new Error('Только администратор может удалять пользователей');
+        }
+        if (getCurrentUserId() == id) {
+            throw new Error('Нельзя удалить свою учетную запись');
+        }
 
-        return protectedFetch(`${BASE_URL}/users/delete/${id}`,{
+        return fetchWithErrorHandling(`${BASE_URL}/users/delete/${id}`, {
             method: "DELETE"
-        })
+        });
     },
     
     create: async (request) => {

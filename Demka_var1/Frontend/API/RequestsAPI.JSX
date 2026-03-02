@@ -1,5 +1,6 @@
-import {base_url} from './BaseData'
-import { jwtDecode } from "jwt-decode";
+import {BASE_URL} from './BaseData'
+import { fetchWithErrorHandling, fetchWithFormData } from './fetchWithErrorHandling';
+import { isAuthenticated, getCurrentUserId, hasRole } from './TokenUtils';
 
 export const RequestsAPI = {
     getAll: async () => {
@@ -20,38 +21,35 @@ export const RequestsAPI = {
         });
     },
 
-    update: async (request) => {
-        var token = getCookie(UGC_COOKIE)
-        if(token == undefined) return;
-        const data = jwtDecode(token);
-        if(data.userId != request.authorId) return;
-        return protectedFetch(`${BASE_URL}/requests/update`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            },
-            body: request
-        })
+    update: async (id, formData) => {
+        if (!isAuthenticated()) {
+            throw new Error('Необходимо войти в систему');
+        }
+        
+        return fetchWithFormData(`${BASE_URL}/requests/update/${id}`, 
+            formData, 'PATCH');
     },
 
     delete: async (id) => {
-        var token = getCookie(UGC_COOKIE)
-        if(token == undefined) return;
-        const data = jwtDecode(token);
-        if(data.role != 'Admin' || data.userId != request.authorId) return;
+        if (!isAuthenticated()) {
+            throw new Error('Необходимо войти в систему');
+        }
+        
+        if (!hasRole('Admin')) {
+            throw new Error('Только администратор может удалять заявки');
+        }
 
-        return protectedFetch(`${BASE_URL}/requests/delete/${id}`,{
+        return fetchWithErrorHandling(`${BASE_URL}/requests/delete/${id}`, {
             method: "DELETE"
-        })
+        });
     },
     
-    create: async (request) => {
-        return protectedFetch(`${BASE_URL}/requests/create`, {
-            method: "POST",
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-            body: request
-        })
+    create: async (fromData) => {
+        if (!isAuthenticated()) {
+            throw new Error('Необходимо войти в систему');
+        }
+        
+        return fetchWithFormData(`${BASE_URL}/requests/create`, 
+            formData, 'POST');
     }
 }

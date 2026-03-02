@@ -1,5 +1,6 @@
-import {base_url} from './BaseData'
-import { jwtDecode } from "jwt-decode";
+import {BASE_URL} from './BaseData'
+import { fetchWithErrorHandling, fetchWithFormData } from './fetchWithErrorHandling';
+import { isAuthenticated, getCurrentUserId, hasRole } from './TokenUtils';
 
 export const CommentsAPI = {
     getAll: async () => {
@@ -20,38 +21,39 @@ export const CommentsAPI = {
         });
     },
 
-    update: async (request) => {
-        var token = getCookie(UGC_COOKIE)
-        if(token == undefined) return;
-        const data = jwtDecode(token);
-        if(data.userId != request.authorId) return;
-        return protectedFetch(`${BASE_URL}/comments/update`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            },
-            body: request
-        })
+    update: async(id, formData) =>{
+         if (!isAuthenticated()) {
+            throw new Error('Необходимо войти в систему');
+        }
+        
+        const authorId = formData.get('authorId');
+        if (!hasRole('Admin') && getCurrentUserId() != authorId) {
+            throw new Error('Вы можете редактировать только свои комментарии');
+        }
+        
+        return fetchWithFormData(`${BASE_URL}/comments/update/${id}`, 
+            formData, 'PATCH');
     },
 
-    delete: async (id) => {
-        var token = getCookie(UGC_COOKIE)
-        if(token == undefined) return;
-        const data = jwtDecode(token);
-        if(data.role != 'Admin' || data.userId != request.authorId) return;
+    delete: async (id, authorId) => {
+        if (!isAuthenticated()) {
+            throw new Error('Необходимо войти в систему');
+        }
+        if (!hasRole('Admin') && getCurrentUserId() != authorId) {
+            throw new Error('Вы можете удалять только свои комментарии');
+        }
 
-        return protectedFetch(`${BASE_URL}/comments/delete/${id}`,{
+        return fetchWithErrorHandling(`${BASE_URL}/comments/delete/${id}`, {
             method: "DELETE"
-        })
+        });
     },
     
-    create: async (request) => {
-        return protectedFetch(`${BASE_URL}/comments/create`, {
-            method: "POST",
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-            body: request
-        })
+    create: async (formData) => {
+        if (!isAuthenticated()) {
+            throw new Error('Необходимо войти в систему');
+        }
+        
+        return fetchWithFormData(`${BASE_URL}/comments/create`, 
+            formData, 'POST');
     }
 }
