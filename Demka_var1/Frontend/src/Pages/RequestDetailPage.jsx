@@ -20,7 +20,7 @@ const RequestDetailPage = () => {
     useEffect(() => {
         loadData();
     }, [id]);
-
+    
     const loadData = async () => {
         try {
             const [requestData, commentsData] = await Promise.all([
@@ -28,9 +28,9 @@ const RequestDetailPage = () => {
                 CommentsAPI.getAll()
             ]);
             setRequest(requestData);
-            setStatus(requestData.requestStatus);
-            setRepairParts(requestData.repairParts || '');
-            setComments(commentsData.filter(c => c.requestID == id));
+            setStatus(requestData.requeststatus);
+            setRepairParts(requestData.repairparts || '');
+            setComments(commentsData.filter(c => c.requestid == id));
         } catch (err) {
             setError(err.message);
         } finally {
@@ -45,8 +45,8 @@ const RequestDetailPage = () => {
         try {
             const formData = new FormData();
             formData.append('message', commentText);
-            formData.append('masterID', getCurrentUserId());
-            formData.append('requestID', id);
+            formData.append('masterid', user?.userid);
+            formData.append('requestid', id);
 
             await CommentsAPI.create(formData);
             setCommentText('');
@@ -59,10 +59,10 @@ const RequestDetailPage = () => {
     const handleUpdateRequest = async () => {
         try {
             const formData = new FormData();
-            formData.append('requestStatus', status);
-            formData.append('repairParts', repairParts);
-            if (status === 'Готова к выдаче' && !request.completionDate) {
-                formData.append('completionDate', new Date().toISOString().split('T')[0]);
+            formData.append('requeststatus', status);
+            formData.append('repairparts', repairParts);
+            if (status === 'Готова к выдаче' && !request.completiondate) {
+                formData.append('completiondate', new Date().toISOString().split('T')[0]);
             }
 
             await RequestsAPI.update(id, formData);
@@ -99,7 +99,7 @@ const RequestDetailPage = () => {
 
             <div className="request-detail">
                 <div className="detail-header">
-                    <h1>Заявка №{request.requestID}</h1>
+                    <h1>Заявка №{request.requestid}</h1>
                     <div className="header-actions">
                         {hasRole('Админ') && (
                             <button onClick={handleDelete} className="delete-btn">
@@ -112,10 +112,10 @@ const RequestDetailPage = () => {
                 <div className="info-grid">
                     <div className="info-card">
                         <h3>Информация о заявке</h3>
-                        <p><strong>Тип техники:</strong> {request.homeTechType}</p>
-                        <p><strong>Модель:</strong> {request.homeTechModel}</p>
-                        <p><strong>Описание проблемы:</strong> {request.problemDescryption}</p>
-                        <p><strong>Дата создания:</strong> {new Date(request.startDate).toLocaleDateString('ru-RU')}</p>
+                        <p><strong>Тип техники:</strong> {request.hometechtype}</p>
+                        <p><strong>Модель:</strong> {request.hometechmodel}</p>
+                        <p><strong>Описание проблемы:</strong> {request.problemdescryption}</p>
+                        <p><strong>Дата создания:</strong> {new Date(request.startdate).toLocaleDateString('ru-RU')}</p>
                     </div>
 
                     <div className="info-card">
@@ -150,18 +150,18 @@ const RequestDetailPage = () => {
                         ) : (
                             <>
                                 <p><strong>Статус:</strong> 
-                                    <span className={`status-badge ${getStatusClass(request.requestStatus)}`}>
-                                        {request.requestStatus}
+                                    <span className={`status-badge ${getStatusClass(request.requeststatus)}`}>
+                                        {request.requeststatus}
                                     </span>
                                 </p>
-                                {request.repairParts && (
-                                    <p><strong>Запчасти:</strong> {request.repairParts}</p>
+                                {request.repairparts && (
+                                    <p><strong>Запчасти:</strong> {request.repairparts}</p>
                                 )}
-                                {request.completionDate && (
-                                    <p><strong>Дата завершения:</strong> {new Date(request.completionDate).toLocaleDateString('ru-RU')}</p>
+                                {request.completiondate && (
+                                    <p><strong>Дата завершения:</strong> {new Date(request.completiondate).toLocaleDateString('ru-RU')}</p>
                                 )}
-                                {request.masterID && (
-                                    <p><strong>Мастер:</strong> #{request.masterID}</p>
+                                {request.masterid && (
+                                    <p><strong>Мастер:</strong> #{request.masterid}</p>
                                 )}
                                 {canEdit && (
                                     <button onClick={() => setIsEditing(true)} className="edit-btn">
@@ -191,10 +191,10 @@ const RequestDetailPage = () => {
 
                     <div className="comments-list">
                         {comments.map(comment => (
-                            <div key={comment.commentID} className="comment">
+                            <div key={comment.commentid} className="comment">
                                 <div className="comment-header">
-                                    <strong>Мастер #{comment.masterID}</strong>
-                                    <small>ID: {comment.commentID}</small>
+                                    <strong>Мастер #{comment.masterid}</strong>
+                                    <small>ID: {comment.commentid}</small>
                                 </div>
                                 <p>{comment.message}</p>
                             </div>

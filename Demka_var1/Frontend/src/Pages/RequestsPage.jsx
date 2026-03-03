@@ -33,8 +33,8 @@ const RequestsPage = () => {
         }
     };
 
-    const getStatusClass = (status) => {
-        switch (status) {
+    const getStatusClass = (requeststatus) => {
+        switch (requeststatus) {
             case 'Новая заявка': return 'status-new';
             case 'В процессе ремонта': return 'status-process';
             case 'Готова к выдаче': return 'status-ready';
@@ -56,20 +56,10 @@ const RequestsPage = () => {
         <div className="requests-page">
             <div className="page-header">
                 <h1>
-                    {hasRole('Заказчик') ? 'Мои заявки' : 'Заявки на ремонт'}
+                    {user.type == "Заказчик" ? 'Мои заявки' : 'Заявки на ремонт'}
                 </h1>
                 <div className="header-actions">
-                    <select 
-                        value={filter} 
-                        onChange={(e) => setFilter(e.target.value)}
-                        className="filter-select"
-                    >
-                        <option value="all">Все заявки</option>
-                        <option value="Новая заявка">Новые</option>
-                        <option value="В процессе ремонта">В работе</option>
-                        <option value="Готова к выдаче">Готовые</option>
-                    </select>
-                    
+
                     {canCreateRequest && (
                         <Link to="/create-request" className="btn-create">
                             + Новая заявка
@@ -80,22 +70,31 @@ const RequestsPage = () => {
 
             <div className="requests-grid">
                 {filteredRequests.map(request => {
-                    const requestId = request?.requestID ?? '???';
-                    const techType = request?.homeTechType ?? '—';
-                    const techModel = request?.homeTechModel ?? '—';
-                    const problemDesc = request?.problemDescryption?.trim() ?? '';
-                    const status = request?.requestStatus ?? 'Неизвестно';
-                    const masterId = request?.masterID;
+                    const requestId = request?.requestid ?? '???';
+                    const techType = request?.hometechtype ?? '—';
+                    const techModel = request?.hometechmodel ?? '—';
+                    const problemDesc = request?.problemdescryption?.trim() ?? '';
+                    const requestStatus = request?.requeststatus ?? 'Неизвестно';
+                    const masterId = request?.masterid;
                     
                     let startDateStr = 'Дата неизвестна';
-                    if (request?.startDate) {
+                    let endDateStr = 'Щас';
+                    if (request?.startdate) {
                         try {
-                            startDateStr = new Date(request.startDate).toLocaleDateString('ru-RU');
+                            const datestart = new Date(request.startdate);
+                            startDateStr = datestart.toLocaleDateString('ru-RU');
                         } catch {
                             startDateStr = 'Некорректная дата';
                         }
                     }
-
+                    if (request?.completiondate) {
+                        try {
+                            const dateend = new Date(request.completiondate);
+                            endDateStr = dateend.toLocaleDateString('ru-RU');;
+                        } catch {
+                            endDateStr = 'Некорректная дата';
+                        }
+                    }
                     const displayDesc = problemDesc
                         ? (problemDesc.length > 100 
                             ? problemDesc.substring(0, 100) + '...' 
@@ -109,8 +108,8 @@ const RequestsPage = () => {
                             className="request-card"
                         >
                             <div className="card-header">
-                                <span className={`status-badge ${getStatusClass(status)}`}>
-                                    {status}
+                                <span className={`status-badge ${getStatusClass(requestStatus)}`}>
+                                    {requestStatus}
                                 </span>
                                 <span className="request-id">№{requestId}</span>
                             </div>
@@ -120,8 +119,8 @@ const RequestsPage = () => {
                             <p className="problem-desc">{displayDesc}</p>
                             
                             <div className="card-footer">
-                                <span className="date"> {startDateStr}</span>
-                                {masterId && (
+                                <span className="date"> {startDateStr} - {endDateStr}</span>
+                                {request.masterid && (
                                     <span className="master"> Мастер #{masterId}</span>
                                 )}
                             </div>
