@@ -1,15 +1,17 @@
 import {BASE_URL} from './BaseData'
 import { fetchWithErrorHandling, fetchWithFormData } from './fetchWithErrorHandling';
-import { isAuthenticated, getCurrentUserId, hasRole } from './TokenUtils';
+import { isAuthenticated, getCurrentUserId, hasRole, setToken } from './TokenUtils';
 
 export const UsersAPI = {
      login: async (login, password) => {
-        const response = await fetch(`${BASE_URL}/auth/login`, {
+        const response = await fetch(`${BASE_URL}/users/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ login, password }),
+            body: JSON.stringify({
+                 login: login, 
+                 password: password }),
         });
         
         if (!response.ok) {
@@ -27,7 +29,7 @@ export const UsersAPI = {
     },
     logout: () => {
         localStorage.removeItem('access_token');
-        window.location.href = '/login';
+        window.location.href = '/';
     },
 
     getAll: async () => {

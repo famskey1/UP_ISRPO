@@ -26,7 +26,7 @@ namespace Backend.Controllers
         public async Task<ActionResult<IEnumerable<Users>>> Get()
         {
             return await db.users.ToListAsync();
-        }
+        }   
         [HttpGet("{id}")]
         public async Task<ActionResult<IEnumerable<Users>>> Get(int id)
         {
@@ -57,7 +57,7 @@ namespace Backend.Controllers
                 {
                 new Claim(JwtRegisteredClaimNames.Sub, configuration["JWT:Subject"]),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim("userid", u.userid.ToString())
+                new Claim("userid", u.userid.ToString()),
             };
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Key"]));
                 var signIN = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

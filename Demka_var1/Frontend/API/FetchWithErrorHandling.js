@@ -20,7 +20,7 @@ export const fetchWithErrorHandling = async (url, options = {}) => {
         
         if (response.status === 401) {
             removeToken();
-            window.location.href = '/login';
+            window.location.href = '/';
             throw new Error('Сессия истекла. Войдите снова.');
         }
         
@@ -57,7 +57,7 @@ export const fetchWithFormData = async (url, formData, method = 'POST') => {
         
         if (response.status === 401) {
             removeToken();
-            window.location.href = '/login';
+            window.location.href = '/';
             throw new Error('Сессия истекла');
         }
         
