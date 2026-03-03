@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { UsersAPI } from '../../API/UsersAPI';
-import { getCurrentUserId, getCurrentUserRole } from '../../API/TokenUtils';
+import { useParams } from 'react-router-dom';
+import { getCurrentUserId, getCurrentUserRole, getTokenData } from '../../API/TokenUtils';
 import '../css/ProfilePage.css';
 
 const ProfilePage = () => {
+    const { id } = useParams();
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -14,6 +16,7 @@ const ProfilePage = () => {
         login: '',
         password: ''
     });
+    const currentUser = getTokenData();
 
     useEffect(() => {
         loadUserData();
@@ -21,7 +24,13 @@ const ProfilePage = () => {
 
     const loadUserData = async () => {
         try {
-            const userId = getCurrentUserId();
+            const userId = id || currentUser?.userid;
+            if (!userId) {
+                setError('Не удалось определить пользователя');
+                setLoading(false);
+                return;
+            }
+
             const userData = await UsersAPI.getOne(userId);
             setUser(userData);
             setFormData({
@@ -68,6 +77,9 @@ const ProfilePage = () => {
 
     return (
         <div className="profile-page">
+            <button onClick={() => navigate(-1)} className="back-btn2">
+                Назад
+            </button>
             <div className="profile-container">
                 <div className="profile-header">
                     <div className="profile-avatar">

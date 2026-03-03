@@ -1,7 +1,7 @@
 .profile-page {
     padding: 40px 20px;
     min-height: calc(100vh - 70px);
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: rgb(106, 197, 106)
 }
 
 .profile-container {
@@ -10,7 +10,6 @@
     background: white;
     border-radius: 20px;
     padding: 40px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
 
 .profile-header {
@@ -23,7 +22,7 @@
 .profile-avatar {
     width: 100px;
     height: 100px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: orange;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -85,7 +84,6 @@
 .edit-profile-btn {
     width: 100%;
     margin-top: 30px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border: none;
     padding: 15px;
@@ -93,7 +91,6 @@
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    transition: transform 0.2s;
 }
 
 .edit-profile-btn:hover {
@@ -135,4 +132,15 @@
 
 .form-actions button:hover {
     transform: translateY(-2px);
+}
+
+.back-btn2 {
+    background: rgb(254, 254, 254);
+    border: none;
+    color: #667eea;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 10px;
+    margin-bottom: 20px;
+    width: auto;
 }
