@@ -1,5 +1,5 @@
 import {BASE_URL} from './BaseData'
-import { fetchWithErrorHandling, fetchWithFormData } from './fetchWithErrorHandling';
+import { fetchWithErrorHandling, fetchWithFormData } from './FetchWithErrorHandling';
 import { isAuthenticated, getCurrentUserId, hasRole } from './TokenUtils';
 
 export const CommentsAPI = {
@@ -27,7 +27,7 @@ export const CommentsAPI = {
         }
         
         const authorId = formData.get('authorId');
-        if (!hasRole('Admin') && getCurrentUserId() != authorId) {
+        if (!hasRole('Админ') && getCurrentUserId() != authorId) {
             throw new Error('Вы можете редактировать только свои комментарии');
         }
         
@@ -39,7 +39,7 @@ export const CommentsAPI = {
         if (!isAuthenticated()) {
             throw new Error('Необходимо войти в систему');
         }
-        if (!hasRole('Admin') && getCurrentUserId() != authorId) {
+        if (!hasRole('Админ') && getCurrentUserId() != authorId) {
             throw new Error('Вы можете удалять только свои комментарии');
         }
 

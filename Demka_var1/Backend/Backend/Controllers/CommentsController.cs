@@ -31,7 +31,7 @@ namespace Backend.Controllers
             return new ObjectResult(c);
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<ActionResult<Comments>> Post(Comments comments)
         {
             if (comments == null)
@@ -43,7 +43,7 @@ namespace Backend.Controllers
             return Ok(comments);
         }
 
-        [HttpPatch]
+        [HttpPatch("update")]
         public async Task<ActionResult<Comments>> Patch(Comments comments)
         {
             if (comments == null)
@@ -59,7 +59,7 @@ namespace Backend.Controllers
             return Ok(comments);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<ActionResult<Comments>> Delete(int id)
         {
             Comments c = await db.comments.FirstOrDefaultAsync(x => x.commentid == id);

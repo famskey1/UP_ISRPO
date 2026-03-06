@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { RequestsAPI } from '../../API/RequestsAPI';
 import { CommentsAPI } from '../../API/CommentsAPI';
-import { getCurrentUserId, hasRole, getCurrentUserRole } from '../../API/TokenUtils';
+import { hasRole, getCurrentUserRole, getTokenData } from '../../API/TokenUtils';
+import CommentList from '../Components/CommentList';
+import CommentForm from '../Components/CommentForm';
 import '../css/RequestDetailPage.css';
 
 const RequestDetailPage = () => {
@@ -12,10 +14,8 @@ const RequestDetailPage = () => {
     const [comments, setComments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [commentText, setCommentText] = useState('');
-    const [repairParts, setRepairParts] = useState('');
-    const [status, setStatus] = useState('');
-    const [isEditing, setIsEditing] = useState(false);
+    const user = getTokenData();
+    const [sendingComment, setSendingComment] = useState(false);
 
     useEffect(() => {
         loadData();
@@ -28,8 +28,6 @@ const RequestDetailPage = () => {
                 CommentsAPI.getAll()
             ]);
             setRequest(requestData);
-            setStatus(requestData.requeststatus);
-            setRepairParts(requestData.repairparts || '');
             setComments(commentsData.filter(c => c.requestid == id));
         } catch (err) {
             setError(err.message);
@@ -38,71 +36,108 @@ const RequestDetailPage = () => {
         }
     };
 
-    const handleAddComment = async (e) => {
-        e.preventDefault();
-        if (!commentText.trim()) return;
+    const handleAddComment = async (text) => {
+        if (!text.trim()) return;
+        setSendingComment(true);
 
         try {
             const formData = new FormData();
-            formData.append('message', commentText);
+            formData.append('message', text);
             formData.append('masterid', user?.userid);
             formData.append('requestid', id);
 
             await CommentsAPI.create(formData);
-            setCommentText('');
             loadData();
         } catch (err) {
             alert(err.message);
+        }finally {
+            setSendingComment(false);
         }
     };
-
-    const handleUpdateRequest = async () => {
-        try {
-            const formData = new FormData();
-            formData.append('requeststatus', status);
-            formData.append('repairparts', repairParts);
-            if (status === 'Готова к выдаче' && !request.completiondate) {
-                formData.append('completiondate', new Date().toISOString().split('T')[0]);
-            }
-
-            await RequestsAPI.update(id, formData);
-            setIsEditing(false);
-            loadData();
-        } catch (err) {
-            alert(err.message);
-        }
-    };
-
-    const handleDelete = async () => {
-        if (!window.confirm('Удалить заявку?')) return;
+    const handleEditComment = async (commentId, newText) => {
+        if (!newText.trim()) return;
         
         try {
-            await RequestsAPI.delete(id);
-            navigate('/requests');
+            const formData = new FormData();
+            formData.append('message', newText);
+
+            await CommentsAPI.update(commentId, formData);
+            loadData();
+            alert('Комментарий обновлен');
+        } catch (err) {
+            alert('Ошибка: ' + err.message);
+        }
+    };
+
+    const handleDeleteComment = async (commentId) => {
+        if (!window.confirm('Удалить комментарий?')) return;
+        
+        try {
+            await CommentsAPI.delete(commentId);
+            loadData();
+            alert('Комментарий удален');
+        } catch (err) {
+            alert('Ошибка: ' + err.message);
+        }
+    };
+    const handleUpdateRequest = async (commentId, newText) => {
+        try {
+            const formData = new FormData();
+            formData.append('message', newText);
+            await CommentsAPI.update(commentId, formData);
+            loadData();
+            alert('Комментарий обновлен');
         } catch (err) {
             alert(err.message);
         }
     };
 
+    const handleDelete = async (commentId) => {
+        if (!window.confirm('Удалить комментарий?')) return;
+        
+        try {
+            await CommentsAPI.delete(commentId);
+            loadData();
+            alert('Комментарий удален');
+        } catch (err) {
+            alert(err.message);
+        }
+    };
+    
+    const handleDeleteRequest = async () => {
+        if (!window.confirm('Вы уверены, что хотите удалить заявку?')) return;
+        alert('Заявка удалена');
+        try {
+            await RequestsAPI.delete(id);
+            alert('Заявка удалена');
+            navigate('/requests');
+        }catch(err){
+            allert(err.message)
+        }
+    }
     if (loading) return <div className="loading">Загрузка...</div>;
     if (error) return <div className="error">{error}</div>;
     if (!request) return <div className="error">Заявка не найдена</div>;
 
-    const canEdit = hasRole('Админ') || hasRole('Мастер');
-    const canComment = hasRole('Мастер');
+    const canEdit = hasRole('Админ') || hasRole('Мастер')|| hasRole('Менеджер');;
+    const canComment = hasRole('Мастер') || hasRole('Заказчик');
 
     return (
         <div className="detail-page">
-            <button onClick={() => navigate('/requests')} className="back-btn">
+            <button onClick={() => navigate(-1)} className="back-btn">
                 Назад к списку
             </button>
-
             <div className="request-detail">
                 <div className="detail-header">
                     <h1>Заявка №{request.requestid}</h1>
                     <div className="header-actions">
+                        {canEdit && (
+                            <button onClick={() => navigate(`/edit-request/${id}`)} className="edit-btn">
+                                Редактировать
+                                </button>	
+                            )}
                         {hasRole('Админ') && (
-                            <button onClick={handleDelete} className="delete-btn">
+                            <button onClick={handleDeleteRequest} className="delete-btn">
                                  Удалить
                             </button>
                         )}
@@ -115,61 +150,31 @@ const RequestDetailPage = () => {
                         <p><strong>Тип техники:</strong> {request.hometechtype}</p>
                         <p><strong>Модель:</strong> {request.hometechmodel}</p>
                         <p><strong>Описание проблемы:</strong> {request.problemdescryption}</p>
-                        <p><strong>Дата создания:</strong> {new Date(request.startdate).toLocaleDateString('ru-RU')}</p>
+                        <p><strong>Дата создания:</strong> {
+                        request.startdate? 
+                        new Date(request.startdate).toLocaleDateString('ru-RU'): 'Не указана'}
+                        </p>
                     </div>
 
                     <div className="info-card">
                         <h3>Статус и выполнение</h3>
-                        {isEditing ? (
-                            <>
-                                <div className="form-group">
-                                    <label>Статус:</label>
-                                    <select value={status} onChange={(e) => setStatus(e.target.value)}>
-                                        <option value="Новая заявка">Новая заявка</option>
-                                        <option value="В процессе ремонта">В процессе ремонта</option>
-                                        <option value="Готова к выдаче">Готова к выдаче</option>
-                                    </select>
-                                </div>
-                                <div className="form-group">
-                                    <label>Запчасти:</label>
-                                    <textarea
-                                        value={repairParts}
-                                        onChange={(e) => setRepairParts(e.target.value)}
-                                        rows="3"
-                                    />
-                                </div>
-                                <div className="action-buttons">
-                                    <button onClick={handleUpdateRequest} className="save-btn">
-                                        Сохранить
-                                    </button>
-                                    <button onClick={() => setIsEditing(false)} className="cancel-btn">
-                                        Отмена
-                                    </button>
-                                </div>
-                            </>
-                        ) : (
-                            <>
-                                <p><strong>Статус:</strong> 
-                                    <span className={`status-badge ${getStatusClass(request.requeststatus)}`}>
-                                        {request.requeststatus}
-                                    </span>
-                                </p>
-                                {request.repairparts && (
-                                    <p><strong>Запчасти:</strong> {request.repairparts}</p>
-                                )}
-                                {request.completiondate && (
-                                    <p><strong>Дата завершения:</strong> {new Date(request.completiondate).toLocaleDateString('ru-RU')}</p>
-                                )}
-                                {request.masterid && (
-                                    <p><strong>Мастер:</strong> #{request.masterid}</p>
-                                )}
-                                {canEdit && (
-                                    <button onClick={() => setIsEditing(true)} className="edit-btn">
-                                        Редактировать
-                                    </button>
-                                )}
-                            </>
+                        <p><strong>Статус:</strong> 
+                            <span className={`status-badge ${getStatusClass(request.requeststatus)}`}>
+                                {request.requeststatus}
+                            </span>
+                        </p>
+                        {request.repairparts && (
+                            <p><strong>Запчасти:</strong> {request.repairparts}</p>
                         )}
+                        {request.completiondate && (
+                            <p><strong>Дата завершения:</strong> {
+                                new Date(request.completiondate).toLocaleDateString('ru-RU')
+                            }</p>
+                        )}
+                        {request.masterid && (
+                            <p><strong>Мастер:</strong> #{request.masterid}</p>
+                        )}
+
                     </div>
                 </div>
 
@@ -177,29 +182,17 @@ const RequestDetailPage = () => {
                     <h2>Комментарии ({comments.length})</h2>
                     
                     {canComment && (
-                        <form onSubmit={handleAddComment} className="comment-form">
-                            <textarea
-                                value={commentText}
-                                onChange={(e) => setCommentText(e.target.value)}
-                                placeholder="Добавить комментарий..."
-                                rows="3"
-                                required
-                            />
-                            <button type="submit">Отправить</button>
-                        </form>
+                        <CommentForm 
+                            onSubmit={handleAddComment}
+                            loading={sendingComment}
+                        />
                     )}
 
-                    <div className="comments-list">
-                        {comments.map(comment => (
-                            <div key={comment.commentid} className="comment">
-                                <div className="comment-header">
-                                    <strong>Мастер #{comment.masterid}</strong>
-                                    <small>ID: {comment.commentid}</small>
-                                </div>
-                                <p>{comment.message}</p>
-                            </div>
-                        ))}
-                    </div>
+                    <CommentList 
+                        comments={comments}
+                        onEditComment={handleEditComment}
+                        onDeleteComment={handleDeleteComment}
+                    />
                 </div>
             </div>
         </div>

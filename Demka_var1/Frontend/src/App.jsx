@@ -1,10 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { getTokenData, isAuthenticated } from '../API/TokenUtils';
-import LoginPage from './Pages/LoginPage';
-import RequestsPage from './Pages/RequestsPage';
-import RequestDetailPage from './Pages/RequestDetailPage';
-import { UsersAPI } from '../API/UsersAPI';
 import Navbar from './Default/Navbar';
 import { Outlet, useNavigate } from 'react-router-dom';
 import './App.css';
@@ -21,7 +16,7 @@ const App = () => {
     const handleLogin = () => {
         setAuth(true);
         const user = getTokenData();
-        if (user.type === 'Заказчик') {
+        if (user?.type === "Заказчик") {
             navigate(`/my-requests/${user.userid}`);
         } else {
             navigate('/requests');

@@ -1,5 +1,5 @@
 import {BASE_URL} from './BaseData'
-import { fetchWithErrorHandling, fetchWithFormData } from './fetchWithErrorHandling';
+import { fetchWithErrorHandling, fetchWithFormData } from './FetchWithErrorHandling';
 import { isAuthenticated, getCurrentUserId, hasRole } from './TokenUtils';
 
 export const RequestsAPI = {
@@ -35,7 +35,7 @@ export const RequestsAPI = {
             throw new Error('Необходимо войти в систему');
         }
         
-        if (!hasRole('Admin')) {
+        if (!hasRole('Админ')) {
             throw new Error('Только администратор может удалять заявки');
         }
 

@@ -1,0 +1,81 @@
+.comment {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 15px;
+    transition: background-color 0.2s;
+}
+
+.comment:hover {
+    background: #f0f2f5;
+}
+
+.comment.editing {
+    background: #fff3e0;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    color: #666;
+    font-size: 14px;
+}
+
+.comment-text {
+    margin: 10px 0;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+.comment-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.comment-actions button {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 5px;
+    width: auto;
+    transition: transform 0.2s;
+}
+
+.comment-actions button:hover {
+    transform: scale(1.1);
+}
+
+.comment.editing textarea {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #667eea;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    resize: vertical;
+}
+
+.save-btn {
+    background: #4caf50;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.cancel-btn {
+    background: #9e9e9e;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.edit-btn {
+    color: #667eea;
+}
+
+.delete-btn {
+    color: #ff4757;
+}

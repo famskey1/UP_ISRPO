@@ -1,6 +1,6 @@
 import {BASE_URL} from './BaseData'
-import { fetchWithErrorHandling, fetchWithFormData } from './fetchWithErrorHandling';
-import { isAuthenticated, getCurrentUserId, hasRole, setToken } from './TokenUtils';
+import { fetchWithErrorHandling, fetchWithJSON } from './FetchWithErrorHandling';
+import { isAuthenticated, getCurrentUserId, hasRole, setToken, getToken } from './TokenUtils';
 
 export const UsersAPI = {
      login: async (login, password) => {
@@ -53,21 +53,33 @@ export const UsersAPI = {
         });
     },
 
-    update: async (id, formData) => {
-        if (!isAuthenticated()) {
-          throw new Error('Необходимо войти в систему');
-        }
+    update: async (id, userData) => {
+    if (!isAuthenticated()) {
+        throw new Error('Необходимо войти в систему');
+    }
 
-        if (!hasRole('Admin') && getCurrentUserId() != id) {
-            throw new Error('Вы можете редактировать только свой профиль');
-        }
-        
-        return fetchWithFormData(`${BASE_URL}/users/update/${id}`, 
-            formData, 'PATCH');
-    },
+    if (!hasRole('Админ') && getCurrentUserId() != id) {
+        throw new Error('Вы можете редактировать только свой профиль');
+    }
+    
+    return fetchWithErrorHandling(`${BASE_URL}/users/update/${id}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+         body: JSON.stringify({
+            userid: id,
+            fio: userData.fio,
+            phone: userData.phone,
+            login: userData.login,
+            password: userData.password || null, 
+            type: userData.type
+        })
+    });
+},
 
     delete: async (id) => {
-        if (!hasRole('Admin')) {
+        if (!hasRole('Админ')) {
             throw new Error('Только администратор может удалять пользователей');
         }
         if (getCurrentUserId() == id) {
@@ -79,13 +91,20 @@ export const UsersAPI = {
         });
     },
     
-    create: async (request) => {
-        return protectedFetch(`${BASE_URL}/users/create`, {
+    create: async (userData) => {
+         const response = await fetch(`${BASE_URL}/users/create`, {
             method: "POST",
             headers: {
-                'Content-Type': 'multipart/form-data',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`,
             },
-            body: request
+            body: JSON.stringify(userData)
         })
+        if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.message || 'Ошибка при создании пользователя');
+    }
+
+    return await response.json();
     }
 }

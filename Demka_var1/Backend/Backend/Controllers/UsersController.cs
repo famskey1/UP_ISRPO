@@ -35,7 +35,7 @@ namespace Backend.Controllers
             return new ObjectResult(u);
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<ActionResult<Users>> Post(Users users)
         {
             if (users == null)
@@ -76,7 +76,7 @@ namespace Backend.Controllers
             return Unauthorized();
         }
 
-        [HttpPut]
+        [HttpPatch("update")]
         public async Task<ActionResult<Users>> Patch(Users users)
         {
             if (users == null)
@@ -92,7 +92,7 @@ namespace Backend.Controllers
             return Ok(users);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<ActionResult<Users>> Delete(int id)
         {
             Users u = await db.users.FirstOrDefaultAsync(x => x.userid == id);

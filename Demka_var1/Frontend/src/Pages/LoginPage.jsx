@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { UsersAPI } from '../../API/UsersAPI';
 import '../css/LoginPage.css';
 import { useOutletContext } from 'react-router-dom';
-
+import { Link } from 'react-router-dom';
 const LoginPage = () => {
     const { handleLogin } = useOutletContext();
     const [login, setLogin] = useState('');
@@ -60,7 +60,11 @@ const LoginPage = () => {
                         {loading ? 'Вход...' : 'Войти'}
                     </button>
                 </form>
-                
+                <div className="login-footer" style={{ marginTop: '20px', textAlign: 'center' }}>
+                    <p>Нет аккаунта?{' '}
+                        <Link to="/register" style={{ color: 'blueviolet' }}>Зарегистрироваться</Link>
+                    </p>
+                </div>
             </div>
         </div>
     );

@@ -30,7 +30,7 @@ namespace Backend.Controllers
             return new ObjectResult(r);
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<ActionResult<Requests>> Post(Requests requests)
         {
             if (requests == null)
@@ -42,7 +42,7 @@ namespace Backend.Controllers
             return Ok(requests);
         }
 
-        [HttpPatch]
+        [HttpPatch("update")]
         public async Task<ActionResult<Requests>> Patch(Requests requests)
         {
             if (requests == null)
@@ -58,7 +58,7 @@ namespace Backend.Controllers
             return Ok(requests);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<ActionResult<Requests>> Delete(int id)
         {
             Requests r = await db.requests.FirstOrDefaultAsync(x => x.requestid == id);

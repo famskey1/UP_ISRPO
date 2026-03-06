@@ -54,15 +54,17 @@ const ProfilePage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const formDataToSend = new FormData();
-            formDataToSend.append('fio', formData.fio);
-            formDataToSend.append('phone', formData.phone);
-            formDataToSend.append('login', formData.login);
+            const userData = {
+            fio: formData.fio,
+            phone: formData.phone,
+            login: formData.login,
+            type: user.type,
+        };
             if (formData.password) {
-                formDataToSend.append('password', formData.password);
+                userData.password = formData.password;
             }
 
-            await UsersAPI.update(user.userid, formDataToSend);
+            await UsersAPI.update(user.userid, userData);
             setIsEditing(false);
             loadUserData();
             alert('Профиль успешно обновлен!');

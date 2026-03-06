@@ -59,7 +59,10 @@ const RequestsPage = () => {
                     {user.type == "Заказчик" ? 'Мои заявки' : 'Заявки на ремонт'}
                 </h1>
                 <div className="header-actions">
-
+                    <input type="text" placeholder='Поиск по номеру заявки'/>
+                    <button onClick={() => navigate('/requests')} className="back-btn">
+                        Найти
+                        </button>
                     {canCreateRequest && (
                         <Link to="/create-request" className="btn-create">
                             + Новая заявка

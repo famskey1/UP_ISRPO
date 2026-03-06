@@ -18,7 +18,15 @@ export const getTokenData = () => {
     const token = getToken();
     if (!token) return null;
     try {
-        return jwtDecode(token);
+        const decoded = jwtDecode(token);
+        return{
+            userid: decoded.userid,
+            type: decoded.type,
+            fio: decoded.fio,
+            login:decoded.login,
+            password:decoded.password,
+            phone:decoded.password
+        }
     } catch {
         return null;
     }
@@ -38,15 +46,15 @@ export const isAuthenticated = () => {
 
 export const getCurrentUserId = () => {
     const data = getTokenData();
-    return data?.userId || data?.sub || null;
+    return data?.userid || data?.userId || null;
 };
 
 export const getCurrentUserRole = () => {
     const data = getTokenData();
-    return data?.role || null;
+    return data?.type || null;
 };
 
-export const hasRole = (role) => {
+export const hasRole = (type) => {
     const userRole = getCurrentUserRole();
-    return userRole === role;
+    return userRole === type;
 };
