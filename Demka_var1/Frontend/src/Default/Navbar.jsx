@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UsersAPI } from '../../API/UsersAPI';
-import { getTokenData } from '../../API/TokenUtils';
+import { getTokenData, hasRole } from '../../API/TokenUtils';
 import '../css/Navbar.css';
 
 const Navbar = () => {
@@ -13,6 +13,8 @@ const Navbar = () => {
         navigate('/');
     };
 
+    if (!user) return null;
+
     return (
         <nav className="navbar">
             <div className="nav-container">
@@ -21,7 +23,7 @@ const Navbar = () => {
                 </Link>
                 
                 <div className="nav-links">
-                    {user.type == "Заказчик" ? (
+                    {user.type == `Заказчик` ? (
                         <Link to={`/my-requests/${user.userid}`} className="nav-link">
                             Мои заявки
                         </Link>
@@ -30,7 +32,11 @@ const Navbar = () => {
                             Все заявки
                         </Link>
                     )}
-                    
+                    {hasRole('Админ') && (
+                        <Link to="/users" className="nav-link">
+                            Пользователи
+                        </Link>
+                    )}
                     <Link to={`/profile/${user.userid}`} className="nav-link">
                         Профиль
                     </Link>

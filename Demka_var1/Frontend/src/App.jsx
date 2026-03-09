@@ -16,10 +16,20 @@ const App = () => {
     const handleLogin = () => {
         setAuth(true);
         const user = getTokenData();
-        if (user?.type === "Заказчик") {
-            navigate(`/my-requests/${user.userid}`);
-        } else {
-            navigate('/requests');
+        switch (user.type) {
+            case 'Заказчик':
+                navigate(`/my-requests/${user.userid}`);
+                break;
+            case 'Мастер':
+            case 'Менеджер':
+            case 'Оператор':
+                navigate('/requests');
+                break;
+            case 'Админ':
+                navigate('/users');
+                break;
+            default:
+                navigate(`/my-requests/${user.userid}`);
         }
     };
 

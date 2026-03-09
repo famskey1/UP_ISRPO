@@ -1,6 +1,6 @@
 import {BASE_URL} from './BaseData'
 import { fetchWithErrorHandling, fetchWithJSON } from './FetchWithErrorHandling';
-import { isAuthenticated, getCurrentUserId, hasRole, setToken, getToken } from './TokenUtils';
+import { isAuthenticated, getCurrentUserId, hasRole, setToken, getToken} from './TokenUtils';
 
 export const UsersAPI = {
      login: async (login, password) => {
@@ -61,21 +61,49 @@ export const UsersAPI = {
     if (!hasRole('Админ') && getCurrentUserId() != id) {
         throw new Error('Вы можете редактировать только свой профиль');
     }
+    const userToUpdate = {
+        userid: parseInt(id), 
+        fio: userData.fio,
+        phone: userData.phone,
+        login: userData.login,
+        password: userData.password || null,
+        type: userData.type
+    };
     
-    return fetchWithErrorHandling(`${BASE_URL}/users/update/${id}`, {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-         body: JSON.stringify({
-            userid: id,
-            fio: userData.fio,
-            phone: userData.phone,
-            login: userData.login,
-            password: userData.password || null, 
-            type: userData.type
-        })
-    });
+    if (!userToUpdate.password) {
+        delete userData.password;
+    }
+
+    if (userToUpdate.type) {
+        userToUpdate.type = userData.type;
+    }
+    if (userToUpdate.password && userData.password.trim() !== '') {
+        userToUpdate.password = userData.password;
+    }
+
+    try {
+        const response = await fetch(`${BASE_URL}/users/update`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`
+            },
+            body: JSON.stringify(userToUpdate)
+        });
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.log('Error response:', errorText);
+            throw new Error(`Ошибка ${response.status}: ${errorText}`);
+        }
+
+        const result = await response.json();
+        return result;
+        
+    } catch (error) {
+        console.error('Update error:', error);
+        throw error;
+    }
 },
 
     delete: async (id) => {
@@ -92,13 +120,15 @@ export const UsersAPI = {
     },
     
     create: async (userData) => {
-         const response = await fetch(`${BASE_URL}/users/create`, {
+        const { userid, ...dataToSend } = userData; 
+        
+        const response = await fetch(`${BASE_URL}/users/create`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${getToken()}`,
             },
-            body: JSON.stringify(userData)
+            body: JSON.stringify(dataToSend)
         })
         if (!response.ok) {
         const error = await response.json().catch(() => ({}));

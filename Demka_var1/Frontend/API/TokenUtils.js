@@ -16,16 +16,13 @@ export const removeToken = () => {
 
 export const getTokenData = () => {
     const token = getToken();
+    
     if (!token) return null;
     try {
         const decoded = jwtDecode(token);
         return{
             userid: decoded.userid,
-            type: decoded.type,
-            fio: decoded.fio,
-            login:decoded.login,
-            password:decoded.password,
-            phone:decoded.password
+            type:decoded.type
         }
     } catch {
         return null;
@@ -46,7 +43,7 @@ export const isAuthenticated = () => {
 
 export const getCurrentUserId = () => {
     const data = getTokenData();
-    return data?.userid || data?.userId || null;
+    return data?.userid || null;
 };
 
 export const getCurrentUserRole = () => {

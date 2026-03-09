@@ -11,6 +11,7 @@ import App from './App'
 import MyRequestsPage from './Pages/MyRequestsPage';
 import CreateRequestPage from './Pages/CreateRequestPage';
 import EditRequestPage from './Pages/EditRequestPage';
+import UsersListPage from './Pages/UsersListPage';
 import './index.css';
 
 const router = createBrowserRouter([
@@ -26,6 +27,7 @@ const router = createBrowserRouter([
             { path: "/requests/:id", element: <RequestDetailPage /> },
             { path: "/create-request", element: <CreateRequestPage /> },
             { path: "/edit-request/:id", element: <EditRequestPage /> },
+            { path: "/users", element: <UsersListPage /> }
         ]
     }
 ]);

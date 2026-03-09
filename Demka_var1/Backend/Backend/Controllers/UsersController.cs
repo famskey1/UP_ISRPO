@@ -42,6 +42,7 @@ namespace Backend.Controllers
             {
                 return BadRequest();
             }
+
             db.users.Add(users);
             await db.SaveChangesAsync();
             return Ok(users);
@@ -58,6 +59,7 @@ namespace Backend.Controllers
                 new Claim(JwtRegisteredClaimNames.Sub, configuration["JWT:Subject"]),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim("userid", u.userid.ToString()),
+                new Claim("type", u.type.ToString()),
             };
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Key"]));
                 var signIN = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

@@ -4,16 +4,21 @@ import { RequestsAPI } from '../../API/RequestsAPI';
 import { hasRole, getTokenData } from '../../API/TokenUtils';
 import '../css/RequestsPage.css';
 
-const RequestsPage = () => {
-    const [requests, setRequests] = useState([]);
-    const [loading, setLoading] = useState(true);
+const RequestsPage = ({ initialRequests, loading: externalLoading, error: externalError, title, isMyRequests, userId }) => {
+    const [requests, setRequests] = useState(initialRequests || []);
+    const [loading, setLoading] = useState(!initialRequests);
     const [error, setError] = useState('');
     const [filter, setFilter] = useState('all');
     const user = getTokenData();
 
     useEffect(() => {
+        if (!initialRequests) {
         loadRequests();
-    }, []);
+        }else{
+            setRequests(initialRequests);
+            setLoading(false);
+        }
+    }, [initialRequests]);
 
     const loadRequests = async () => {
         try {
@@ -22,7 +27,7 @@ const RequestsPage = () => {
             
             let filteredData = data;
             if (hasRole('Заказчик')) {
-                filteredData = data.filter(req => req.clientid === user.userid);
+                filteredData = data.filter(req => req.clientid === user?.userid);
             }
             
             setRequests(filteredData);
@@ -33,8 +38,8 @@ const RequestsPage = () => {
         }
     };
 
-    const getStatusClass = (requeststatus) => {
-        switch (requeststatus) {
+    const getStatusClass = (status) => {
+        switch (status) {
             case 'Новая заявка': return 'status-new';
             case 'В процессе ремонта': return 'status-process';
             case 'Готова к выдаче': return 'status-ready';
@@ -44,30 +49,31 @@ const RequestsPage = () => {
 
     const filteredRequests = requests.filter(req => {
         if (filter === 'all') return true;
-        return req.requestStatus === filter;
+        return req.requeststatus === filter;
     });
 
-    const canCreateRequest = hasRole('Менеджер') || hasRole('Оператор') || hasRole('Заказчик');
-
-    if (loading) return <div className="loading">Загрузка...</div>;
-    if (error) return <div className="error">{error}</div>;
+    if (loading || externalLoading) return <div className="loading">Загрузка...</div>;
+    if (error || externalError) return <div className="error">{error || externalError}</div>;
 
     return (
         <div className="requests-page">
             <div className="page-header">
                 <h1>
-                    {user.type == "Заказчик" ? 'Мои заявки' : 'Заявки на ремонт'}
+                    {title|| user?.type == "Заказчик" ? 'Мои заявки' : 'Заявки на ремонт'}
                 </h1>
                 <div className="header-actions">
-                    <input type="text" placeholder='Поиск по номеру заявки'/>
-                    <button onClick={() => navigate('/requests')} className="back-btn">
-                        Найти
-                        </button>
-                    {canCreateRequest && (
-                        <Link to="/create-request" className="btn-create">
-                            + Новая заявка
-                        </Link>
-                    )}
+                    <select value={filter} 
+                    onChange={(e) => setFilter(e.target.value)}
+                    className="filter-select"
+                    >
+                        <option value="all">Все заявки</option>
+                        <option value="Новая заявка">Новые</option>
+                        <option value="В процессе ремонта">В работе</option>
+                        <option value="Готова к выдаче">Готовые</option>
+                    </select>
+                    <Link to="/create-request" className="btn-create">
+                        + Новая заявка
+                    </Link>
                 </div>
             </div>
 

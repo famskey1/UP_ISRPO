@@ -3,20 +3,20 @@
   "WorkspaceRootPath": "D:\\UP_ISRPO\\Demka_var1\\Backend\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{1F65B3B7-9A03-45C4-86C4-8F0EE7BBD1CA}|Backend\\Backend.csproj|d:\\up_isrpo\\demka_var1\\backend\\backend\\models\\requests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1F65B3B7-9A03-45C4-86C4-8F0EE7BBD1CA}|Backend\\Backend.csproj|solutionrelative:backend\\models\\requests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1F65B3B7-9A03-45C4-86C4-8F0EE7BBD1CA}|Backend\\Backend.csproj|d:\\up_isrpo\\demka_var1\\backend\\backend\\controllers\\requestscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1F65B3B7-9A03-45C4-86C4-8F0EE7BBD1CA}|Backend\\Backend.csproj|solutionrelative:backend\\controllers\\requestscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{1F65B3B7-9A03-45C4-86C4-8F0EE7BBD1CA}|Backend\\Backend.csproj|d:\\up_isrpo\\demka_var1\\backend\\backend\\controllers\\userscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1F65B3B7-9A03-45C4-86C4-8F0EE7BBD1CA}|Backend\\Backend.csproj|solutionrelative:backend\\controllers\\userscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{1F65B3B7-9A03-45C4-86C4-8F0EE7BBD1CA}|Backend\\Backend.csproj|d:\\up_isrpo\\demka_var1\\backend\\backend\\models\\users.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1F65B3B7-9A03-45C4-86C4-8F0EE7BBD1CA}|Backend\\Backend.csproj|solutionrelative:backend\\models\\users.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1F65B3B7-9A03-45C4-86C4-8F0EE7BBD1CA}|Backend\\Backend.csproj|d:\\up_isrpo\\demka_var1\\backend\\backend\\models\\requests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1F65B3B7-9A03-45C4-86C4-8F0EE7BBD1CA}|Backend\\Backend.csproj|solutionrelative:backend\\models\\requests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1F65B3B7-9A03-45C4-86C4-8F0EE7BBD1CA}|Backend\\Backend.csproj|d:\\up_isrpo\\demka_var1\\backend\\backend\\controllers\\requestscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1F65B3B7-9A03-45C4-86C4-8F0EE7BBD1CA}|Backend\\Backend.csproj|solutionrelative:backend\\controllers\\requestscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{1F65B3B7-9A03-45C4-86C4-8F0EE7BBD1CA}|Backend\\Backend.csproj|d:\\up_isrpo\\demka_var1\\backend\\backend\\controllers\\commentscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -42,7 +42,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 9,
+          "SelectedChildIndex": 8,
           "Children": [
             {
               "$type": "Bookmark",
@@ -70,7 +70,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "RequestsController.cs",
               "DocumentMoniker": "D:\\UP_ISRPO\\Demka_var1\\Backend\\Backend\\Controllers\\RequestsController.cs",
               "RelativeDocumentMoniker": "Backend\\Controllers\\RequestsController.cs",
@@ -78,8 +78,7 @@
               "RelativeToolTip": "Backend\\Controllers\\RequestsController.cs",
               "ViewState": "AgIAABYAAAAAAAAAAAAQwCAAAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-25T12:54:14.242Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-25T12:54:14.242Z"
             },
             {
               "$type": "Document",
@@ -107,41 +106,40 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 1,
               "Title": "Users.cs",
               "DocumentMoniker": "D:\\UP_ISRPO\\Demka_var1\\Backend\\Backend\\Models\\Users.cs",
               "RelativeDocumentMoniker": "Backend\\Models\\Users.cs",
               "ToolTip": "D:\\UP_ISRPO\\Demka_var1\\Backend\\Backend\\Models\\Users.cs",
               "RelativeToolTip": "Backend\\Models\\Users.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAA9AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-02-25T12:50:22.31Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "UsersController.cs",
               "DocumentMoniker": "D:\\UP_ISRPO\\Demka_var1\\Backend\\Backend\\Controllers\\UsersController.cs",
               "RelativeDocumentMoniker": "Backend\\Controllers\\UsersController.cs",
               "ToolTip": "D:\\UP_ISRPO\\Demka_var1\\Backend\\Backend\\Controllers\\UsersController.cs",
               "RelativeToolTip": "Backend\\Controllers\\UsersController.cs",
-              "ViewState": "AgIAABsAAAAAAAAAAAAYwFoAAAAoAAAAAAAAAA==",
+              "ViewState": "AgIAABMAAAAAAAAAAAAQwCcAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-02-25T12:54:48.895Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "Requests.cs",
               "DocumentMoniker": "D:\\UP_ISRPO\\Demka_var1\\Backend\\Backend\\Models\\Requests.cs",
               "RelativeDocumentMoniker": "Backend\\Models\\Requests.cs",
-              "ToolTip": "D:\\UP_ISRPO\\Demka_var1\\Backend\\Backend\\Models\\Requests.cs*",
-              "RelativeToolTip": "Backend\\Models\\Requests.cs*",
+              "ToolTip": "D:\\UP_ISRPO\\Demka_var1\\Backend\\Backend\\Models\\Requests.cs",
+              "RelativeToolTip": "Backend\\Models\\Requests.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAeAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-25T12:37:23.935Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-25T12:37:23.935Z"
             },
             {
               "$type": "Document",

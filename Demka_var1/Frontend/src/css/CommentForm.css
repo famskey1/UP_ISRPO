@@ -22,7 +22,7 @@
 }
 
 .comment-form button {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: blueviolet;
     color: white;
     border: none;
     padding: 10px 25px;

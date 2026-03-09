@@ -6,7 +6,7 @@ CREATE TABLE users (
     phone VARCHAR(20),
     login VARCHAR(50) UNIQUE NOT NULL,
     password VARCHAR(100) NOT NULL,
-    type VARCHAR(50) NOT NULL CHECK (type IN ('Менеджер', 'Мастер', 'Оператор', 'Заказчик'))
+    type VARCHAR(50) NOT NULL CHECK (type IN ('Менеджер', 'Мастер', 'Оператор', 'Заказчик', 'Админ'))
 );
 CREATE TABLE requests (
     requestID SERIAL PRIMARY KEY,

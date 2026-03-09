@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { UsersAPI } from '../../API/UsersAPI';
-import { useParams } from 'react-router-dom';
+import { useParams,  useNavigate } from 'react-router-dom';
 import { getCurrentUserId, getCurrentUserRole, getTokenData } from '../../API/TokenUtils';
 import '../css/ProfilePage.css';
-
 const ProfilePage = () => {
     const { id } = useParams();
     const [user, setUser] = useState(null);
@@ -18,6 +17,7 @@ const ProfilePage = () => {
     });
     const currentUser = getTokenData();
 
+    const navigate = useNavigate();
     useEffect(() => {
         loadUserData();
     }, []);
@@ -59,14 +59,15 @@ const ProfilePage = () => {
             phone: formData.phone,
             login: formData.login,
             type: user.type,
+            password: formData.password
         };
-            if (formData.password) {
-                userData.password = formData.password;
+            if (!formData.password) {
+                userData.password = user.password;
             }
 
             await UsersAPI.update(user.userid, userData);
             setIsEditing(false);
-            loadUserData();
+            await loadUserData();
             alert('Профиль успешно обновлен!');
         } catch (err) {
             alert(err.message);

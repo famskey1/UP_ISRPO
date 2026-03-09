@@ -8,23 +8,11 @@ const CreateRequestPage = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
-        homeTechType: '',
-        homeTechModel: '',
-        problemDescryption: ''
+        hometechtype: '',
+        hometechmodel: '',
+        problemdescryption: ''
     });
     const user = getTokenData();
-
-    const techTypes = [
-        'Холодильник',
-        'Стиральная машина',
-        'Фен',
-        'Тостер',
-        'Мультиварка',
-        'Микроволновая печь',
-        'Телевизор',
-        'Ноутбук',
-        'Другое'
-    ];
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -34,7 +22,7 @@ const CreateRequestPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        if (!formData.homeTechType || !formData.homeTechModel || !formData.problemDescryption) {
+        if (!formData.hometechtype || !formData.hometechmodel || !formData.problemdescryption) {
             alert('Пожалуйста, заполните все поля');
             return;
         }
@@ -42,15 +30,16 @@ const CreateRequestPage = () => {
         setLoading(true);
         
         try {
-            const formDataToSend = new FormData();
-            formDataToSend.append('hometechtype', formData.homeTechType);
-            formDataToSend.append('hometechmodel', formData.homeTechModel);
-            formDataToSend.append('problemdescryption', formData.problemDescryption);
-            formDataToSend.append('clientid', user?.userid);
-            formDataToSend.append('requeststatus', 'Новая заявка');
-            formDataToSend.append('startdate', new Date().toISOString().split('T')[0]);
+            const requestData = {
+                hometechtype: formData.hometechtype,
+                hometechmodel: formData.hometechmodel,
+                problemdescryption: formData.problemdescryption,
+                clientid: user?.userid,
+                requeststatus: 'Новая заявка',
+                startdate: new Date().toISOString().split('T')[0]
+            };
 
-            await RequestsAPI.create(formDataToSend);
+            await RequestsAPI.create(requestData);
             alert('Заявка успешно создана!');
             navigate(user?.type === 'Заказчик' ? `/my-requests/${user.userid}` : '/requests');
         } catch (err) {
@@ -68,25 +57,22 @@ const CreateRequestPage = () => {
                 <form onSubmit={handleSubmit} className="request-form">
                     <div className="form-group">
                         <label>Тип техники <span className="required">*</span></label>
-                        <select
-                            name="homeTechType"
-                            value={formData.homeTechType}
+                        <input
+                            type="text"
+                            name="hometechtype"
+                            value={formData.hometechtype}
                             onChange={handleInputChange}
-                            required
+                            placeholder='Напишите тип техники'
                         >
-                            <option value="">Выберите тип техники</option>
-                            {techTypes.map(type => (
-                                <option key={type} value={type}>{type}</option>
-                            ))}
-                        </select>
+                        </input>
                     </div>
 
                     <div className="form-group">
                         <label>Модель техники <span className="required">*</span></label>
                         <input
                             type="text"
-                            name="homeTechModel"
-                            value={formData.homeTechModel}
+                            name="hometechmodel"
+                            value={formData.hometechmodel}
                             onChange={handleInputChange}
                             placeholder="Например: Indesit DS 316 W"
                             required
@@ -96,8 +82,8 @@ const CreateRequestPage = () => {
                     <div className="form-group">
                         <label>Описание проблемы <span className="required">*</span></label>
                         <textarea
-                            name="problemDescryption"
-                            value={formData.problemDescryption}
+                            name="problemdescryption"
+                            value={formData.problemdescryption}
                             onChange={handleInputChange}
                             placeholder="Подробно опишите проблему..."
                             rows="6"
@@ -114,7 +100,7 @@ const CreateRequestPage = () => {
                             onClick={() => navigate(-1)} 
                             className="btn-cancel"
                         >
-                            ✖ Отмена
+                            Отмена
                         </button>
                     </div>
                 </form>

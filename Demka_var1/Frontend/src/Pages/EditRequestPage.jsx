@@ -11,12 +11,14 @@ const EditRequestPage = () => {
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
     const [formData, setFormData] = useState({
-        homeTechType: '',
-        homeTechModel: '',
-        problemDescryption: '',
-        requestStatus: '',
-        repairParts: '',
-        masterId: ''
+        requestid:'',
+        hometechtype: '',
+        hometechmodel: '',
+        problemdescryption: '',
+        requeststatus: '',
+        repairparts: '',
+        masterid: '',
+        clientid: ''
     });
     const user = getTokenData();
 
@@ -28,13 +30,16 @@ const EditRequestPage = () => {
         try {
             const data = await RequestsAPI.getOne(id);
             setFormData({
-                homeTechType: data.hometechtype || '',
-                homeTechModel: data.hometechmodel || '',
-                problemDescryption: data.problemdescryption || '',
-                requestStatus: data.requeststatus || '',
-                repairParts: data.repairparts || '',
-                masterId: data.masterid || ''
+                requestid: data.requestid,
+                hometechtype: data.hometechtype || '',
+                hometechmodel: data.hometechmodel || '',
+                problemdescryption: data.problemdescryption || '',
+                requeststatus: data.requeststatus || '',
+                repairparts: data.repairparts || '',
+                masterid: data.masterid || '',
+                clientid: data.clientid || ''
             });
+
         } catch (err) {
             setError(err.message);
         } finally {
@@ -52,20 +57,24 @@ const EditRequestPage = () => {
         setSaving(true);
 
         try {
-            const formDataToSend = new FormData();
-            formDataToSend.append('hometechtype', formData.homeTechType);
-            formDataToSend.append('hometechmodel', formData.homeTechModel);
-            formDataToSend.append('problemdescryption', formData.problemDescryption);
-            formDataToSend.append('requeststatus', formData.requestStatus);
-            formDataToSend.append('repairparts', formData.repairParts);
-            
-            if (formData.requestStatus === 'Готова к выдаче') {
-                formDataToSend.append('completiondate', new Date().toISOString().split('T')[0]);
-            }
+            const requestData = {
+                requestid: parseInt(id),
+                hometechtype: formData.hometechtype,
+                hometechmodel: formData.hometechmodel,
+                problemdescryption: formData.problemdescryption,
+                requeststatus: formData.requeststatus,
+                repairparts: formData.repairparts || null,
+                masterid: formData.masterid ? parseInt(formData.masterid) : null, 
+                clientid: parseInt(formData.clientid) 
+            };
 
-            await RequestsAPI.update(id, formDataToSend);
+            if (formData.requeststatus === 'Готова к выдаче') {
+                requestData.completiondate = new Date().toISOString().split('T')[0];
+            }
+            await RequestsAPI.update(id, requestData);
+
             alert('Заявка успешно обновлена!');
-            navigate(`/requests/${id}`);
+            navigate(-1);
         } catch (err) {
             alert('Ошибка: ' + err.message);
         } finally {
@@ -79,9 +88,9 @@ const EditRequestPage = () => {
         try {
             await RequestsAPI.delete(id);
             alert('Заявка удалена');
-            navigate('/requests');
+            navigate(-1);
         } catch (err) {
-            alert('❌ Ошибка: ' + err.message);
+            alert('Ошибка: ' + err.message);
         }
     };
 
@@ -97,11 +106,12 @@ const EditRequestPage = () => {
                 
                 <form onSubmit={handleSubmit} className="request-form">
                     <div className="form-group">
+                        <input type="hidden" name="clientid" value={formData.clientid} />
                         <label>Тип техники</label>
                         <input
                             type="text"
-                            name="homeTechType"
-                            value={formData.homeTechType}
+                            name="hometechtype"
+                            value={formData.hometechtype}
                             onChange={handleInputChange}
                             required
                             disabled={!canEdit}
@@ -112,8 +122,8 @@ const EditRequestPage = () => {
                         <label>Модель техники</label>
                         <input
                             type="text"
-                            name="homeTechModel"
-                            value={formData.homeTechModel}
+                            name="hometechmodel"
+                            value={formData.hometechmodel}
                             onChange={handleInputChange}
                             required
                             disabled={!canEdit}
@@ -123,8 +133,8 @@ const EditRequestPage = () => {
                     <div className="form-group">
                         <label>Описание проблемы</label>
                         <textarea
-                            name="problemDescryption"
-                            value={formData.problemDescryption}
+                            name="problemdescryption"
+                            value={formData.problemdescryption}
                             onChange={handleInputChange}
                             rows="4"
                             required
@@ -136,7 +146,7 @@ const EditRequestPage = () => {
                         <label>Статус</label>
                         <select
                             name="requestStatus"
-                            value={formData.requestStatus}
+                            value={formData.requeststatus}
                             onChange={handleInputChange}
                             disabled={!canEdit}
                         >
@@ -150,7 +160,7 @@ const EditRequestPage = () => {
                         <label>Использованные запчасти</label>
                         <textarea
                             name="repairParts"
-                            value={formData.repairParts}
+                            value={formData.repairparts}
                             onChange={handleInputChange}
                             rows="3"
                             placeholder="Укажите запчасти через запятую"
